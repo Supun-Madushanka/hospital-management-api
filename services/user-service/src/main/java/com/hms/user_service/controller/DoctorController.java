@@ -42,6 +42,15 @@ public class DoctorController {
                 .body(ApiResponse.success("Doctor retrieved successfully", response));
     }
 
+    @GetMapping("/auth/{authId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse<DoctorResponse>> getDoctorByAuthId(@PathVariable Long authId) {
+        DoctorResponse response = doctorService.getDoctorByAuthId(authId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Doctor retrieved successfully", response));
+    }
+
     @GetMapping("/me")
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<DoctorResponse>> getMyDetails(Authentication authentication) {

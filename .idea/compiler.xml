@@ -11,6 +11,7 @@
         <module name="config-server" />
         <module name="auth-service" />
         <module name="user-service" />
+        <module name="appointment-service" />
         <module name="eureka-server" />
       </profile>
     </annotationProcessing>
@@ -18,6 +19,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="appointment-service" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
