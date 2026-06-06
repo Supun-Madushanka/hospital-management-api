@@ -1,6 +1,5 @@
-package com.hms.auth_service.security;
+package com.hms.user_service.security;
 
-import com.hms.auth_service.entity.Credential;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class JwtService {
@@ -18,27 +15,9 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private long expiration;
-
     private SecretKey getSigningKey() {
         byte[] keyBytes = java.util.HexFormat.of().parseHex(secret);
         return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public String generateToken(Credential credential) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", credential.getRole().name());
-        claims.put("status", credential.getStatus().name());
-        claims.put("userId", credential.getId());
-
-        return Jwts.builder()
-                .claims(claims)
-                .subject(credential.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey())
-                .compact();
     }
 
     public Claims extractAllClaims(String token) {
@@ -55,6 +34,10 @@ public class JwtService {
 
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
     }
 
     public boolean isTokenValid(String token) {

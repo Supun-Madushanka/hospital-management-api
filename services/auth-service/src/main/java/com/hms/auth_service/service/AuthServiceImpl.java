@@ -84,4 +84,21 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .build();
     }
+
+    @Override
+    public AuthResponse updateStatus(Long authId, String status) {
+        Credential credential = credentialRepository.findById(authId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        credential.setStatus(UserStatus.valueOf(status));
+        Credential saved = credentialRepository.save(credential);
+
+        return AuthResponse.builder()
+                .id(saved.getId())
+                .email(saved.getEmail())
+                .role(saved.getRole())
+                .status(saved.getStatus())
+                .token(null)
+                .build();
+    }
 }

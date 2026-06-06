@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -34,5 +36,15 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Login successful", response));
+    }
+
+    @PutMapping("/update-status/{authId}")
+    public ResponseEntity<ApiResponse<AuthResponse>> updateStatus(
+            @PathVariable("authId") Long authId,
+            @RequestBody Map<String, String> request) {
+        AuthResponse response = authService.updateStatus(authId, request.get("status"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Status updated successfully", response));
     }
 }
