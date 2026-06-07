@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users/patients")
 @RequiredArgsConstructor
@@ -70,5 +72,14 @@ public class PatientController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Account deleted successfully"));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<PatientResponse>>> getAllPatients() {
+        List<PatientResponse> response = patientService.getAllPatients();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Patients retrieved successfully", response));
     }
 }

@@ -11,6 +11,9 @@ import com.hms.user_service.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
@@ -88,6 +91,14 @@ public class PatientServiceImpl implements PatientService {
 
         patientRepository.delete(patient);
         authServiceClient.deleteCredential(authId);
+    }
+
+    @Override
+    public List<PatientResponse> getAllPatients() {
+        return patientRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private PatientResponse mapToResponse(Patient patient) {

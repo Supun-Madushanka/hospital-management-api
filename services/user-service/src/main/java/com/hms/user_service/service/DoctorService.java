@@ -14,4 +14,5 @@ public interface DoctorService {
     DoctorResponse approveOrRejectDoctor(Long id, DoctorApprovalRequest request, Long adminAuthId);
     DoctorResponse updateDoctor(Long authId, DoctorUpdateRequest request);
     void deleteDoctor(Long authId);
+    List<DoctorResponse> getAllDoctors();
 }

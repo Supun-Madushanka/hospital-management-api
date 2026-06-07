@@ -126,6 +126,14 @@ public class DoctorServiceImpl implements DoctorService {
         authServiceClient.deleteCredential(authId);
     }
 
+    @Override
+    public List<DoctorResponse> getAllDoctors() {
+        return doctorRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private DoctorResponse mapToResponse(Doctor doctor) {
         return DoctorResponse.builder()
                 .id(doctor.getId())

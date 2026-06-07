@@ -106,4 +106,13 @@ public class DoctorController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Account deleted successfully"));
     }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<DoctorResponse>>> getAllDoctors() {
+        List<DoctorResponse> response = doctorService.getAllDoctors();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Doctors retrieved successfully", response));
+    }
 }
