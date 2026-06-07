@@ -101,6 +101,15 @@ public class PatientServiceImpl implements PatientService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deletePatientById(Long id) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+        patientRepository.delete(patient);
+        authServiceClient.deleteCredential(patient.getAuthId());
+    }
+
     private PatientResponse mapToResponse(Patient patient) {
         return PatientResponse.builder()
                 .id(patient.getId())

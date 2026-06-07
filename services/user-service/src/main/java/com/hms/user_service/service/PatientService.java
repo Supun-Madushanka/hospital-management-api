@@ -12,4 +12,5 @@ public interface PatientService {
     PatientResponse updatePatient(Long authId, PatientUpdateRequest request);
     void deletePatient(Long authId);
     List<PatientResponse> getAllPatients();
+    void deletePatientById(Long id);
 }

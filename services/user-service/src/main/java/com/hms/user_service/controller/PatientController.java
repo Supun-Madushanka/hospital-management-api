@@ -82,4 +82,13 @@ public class PatientController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Patients retrieved successfully", response));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> deletePatient(@PathVariable Long id) {
+        patientService.deletePatientById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Patient deleted successfully"));
+    }
 }

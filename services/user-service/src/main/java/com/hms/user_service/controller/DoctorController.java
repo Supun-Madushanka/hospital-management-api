@@ -115,4 +115,13 @@ public class DoctorController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Doctors retrieved successfully", response));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> deleteDoctor(@PathVariable Long id) {
+        doctorService.deleteDoctorById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Doctor deleted successfully"));
+    }
 }
