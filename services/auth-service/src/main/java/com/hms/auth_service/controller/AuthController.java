@@ -47,4 +47,12 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Status updated successfully", response));
     }
+
+    @DeleteMapping("/delete/{authId}")
+    public ResponseEntity<ApiResponse<?>> deleteCredential(@PathVariable Long authId) {
+        authService.deleteCredential(authId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Credential deleted successfully"));
+    }
 }

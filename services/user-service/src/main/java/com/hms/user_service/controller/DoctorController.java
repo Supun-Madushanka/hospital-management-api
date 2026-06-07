@@ -96,4 +96,14 @@ public class DoctorController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Profile updated successfully", response));
     }
+
+    @DeleteMapping("/me")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse<?>> deleteMyAccount(Authentication authentication) {
+        Long authId = (Long) authentication.getCredentials();
+        doctorService.deleteDoctor(authId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Account deleted successfully"));
+    }
 }

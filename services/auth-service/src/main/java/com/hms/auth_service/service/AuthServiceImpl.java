@@ -101,4 +101,11 @@ public class AuthServiceImpl implements AuthService {
                 .token(null)
                 .build();
     }
+
+    @Override
+    public void deleteCredential(Long authId) {
+        Credential credential = credentialRepository.findById(authId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        credentialRepository.delete(credential);
+    }
 }

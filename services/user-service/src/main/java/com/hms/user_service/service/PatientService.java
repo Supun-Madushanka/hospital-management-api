@@ -9,4 +9,5 @@ public interface PatientService {
     PatientResponse getPatientById(Long id);
     PatientResponse getPatientByAuthId(Long authId);
     PatientResponse updatePatient(Long authId, PatientUpdateRequest request);
+    void deletePatient(Long authId);
 }
