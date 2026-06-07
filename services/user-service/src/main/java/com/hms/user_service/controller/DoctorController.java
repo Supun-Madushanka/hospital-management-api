@@ -2,6 +2,7 @@ package com.hms.user_service.controller;
 
 import com.hms.user_service.dto.request.DoctorApprovalRequest;
 import com.hms.user_service.dto.request.DoctorRegisterRequest;
+import com.hms.user_service.dto.request.DoctorUpdateRequest;
 import com.hms.user_service.dto.response.DoctorResponse;
 import com.hms.user_service.exception.UnauthorizedException;
 import com.hms.user_service.response.ApiResponse;
@@ -81,5 +82,18 @@ public class DoctorController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Doctor status updated successfully", response));
+    }
+
+    // Doctors can update their own profile
+    @PutMapping("/me")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse<DoctorResponse>> updateMyProfile(
+            @RequestBody DoctorUpdateRequest request,
+            Authentication authentication) {
+        Long authId = (Long) authentication.getCredentials();
+        DoctorResponse response = doctorService.updateDoctor(authId, request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Profile updated successfully", response));
     }
 }

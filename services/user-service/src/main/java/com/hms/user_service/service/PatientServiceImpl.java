@@ -1,6 +1,7 @@
 package com.hms.user_service.service;
 
 import com.hms.user_service.dto.request.PatientRegisterRequest;
+import com.hms.user_service.dto.request.PatientUpdateRequest;
 import com.hms.user_service.dto.response.PatientResponse;
 import com.hms.user_service.entity.Patient;
 import com.hms.user_service.exception.ResourceNotFoundException;
@@ -63,6 +64,21 @@ public class PatientServiceImpl implements PatientService {
         Patient patient = patientRepository.findByAuthId(authId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
         return mapToResponse(patient);
+    }
+
+    @Override
+    public PatientResponse updatePatient(Long authId, PatientUpdateRequest request) {
+        Patient patient = patientRepository.findByAuthId(authId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+        if (request.getName() != null) patient.setName(request.getName());
+        if (request.getPhone() != null) patient.setPhone(request.getPhone());
+        if (request.getDateOfBirth() != null) patient.setDateOfBirth(request.getDateOfBirth());
+        if (request.getGender() != null) patient.setGender(request.getGender());
+        if (request.getAddress() != null) patient.setAddress(request.getAddress());
+
+        Patient saved = patientRepository.save(patient);
+        return mapToResponse(saved);
     }
 
     private PatientResponse mapToResponse(Patient patient) {

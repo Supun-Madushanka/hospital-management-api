@@ -2,6 +2,7 @@ package com.hms.user_service.service;
 
 import com.hms.user_service.dto.request.DoctorApprovalRequest;
 import com.hms.user_service.dto.request.DoctorRegisterRequest;
+import com.hms.user_service.dto.request.DoctorUpdateRequest;
 import com.hms.user_service.dto.response.DoctorResponse;
 import com.hms.user_service.entity.Doctor;
 import com.hms.user_service.enums.ApprovalStatus;
@@ -99,6 +100,20 @@ public class DoctorServiceImpl implements DoctorService {
                 new AuthServiceClient.StatusUpdateRequest(authStatus)
         );
 
+        return mapToResponse(saved);
+    }
+
+    @Override
+    public DoctorResponse updateDoctor(Long authId, DoctorUpdateRequest request) {
+        Doctor doctor = doctorRepository.findByAuthId(authId)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        if (request.getName() != null) doctor.setName(request.getName());
+        if (request.getPhone() != null) doctor.setPhone(request.getPhone());
+        if (request.getSpeciality() != null) doctor.setSpeciality(request.getSpeciality());
+        if (request.getExperience() != null) doctor.setExperience(request.getExperience());
+
+        Doctor saved = doctorRepository.save(doctor);
         return mapToResponse(saved);
     }
 

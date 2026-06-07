@@ -1,6 +1,7 @@
 package com.hms.user_service.controller;
 
 import com.hms.user_service.dto.request.PatientRegisterRequest;
+import com.hms.user_service.dto.request.PatientUpdateRequest;
 import com.hms.user_service.dto.response.PatientResponse;
 import com.hms.user_service.exception.UnauthorizedException;
 import com.hms.user_service.response.ApiResponse;
@@ -47,5 +48,17 @@ public class PatientController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Patient retrieved successfully", response));
+    }
+
+    @PutMapping("/me")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse<PatientResponse>> updateMyProfile(
+            @RequestBody PatientUpdateRequest request,
+            Authentication authentication) {
+        Long authId = (Long) authentication.getCredentials();
+        PatientResponse response = patientService.updatePatient(authId, request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Profile updated successfully", response));
     }
 }
