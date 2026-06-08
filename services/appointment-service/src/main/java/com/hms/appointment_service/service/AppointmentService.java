@@ -12,4 +12,5 @@ public interface AppointmentService {
     List<AppointmentResponse> getAllAppointments();
     AppointmentResponse updateAppointmentStatus(Long id, AppointmentStatusRequest request, Long authId, String role);
     AppointmentResponse cancelAppointment(Long id, Long authId, String role);
+    void deleteAppointment(Long id);
 }

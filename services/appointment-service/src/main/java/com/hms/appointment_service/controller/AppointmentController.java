@@ -100,4 +100,13 @@ public class AppointmentController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Appointment cancelled successfully", response));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> deleteAppointment(@PathVariable Long id){
+        appointmentService.deleteAppointment(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Appointment deleted successfully"));
+    }
 }

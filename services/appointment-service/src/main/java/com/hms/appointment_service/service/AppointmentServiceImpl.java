@@ -129,6 +129,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         return mapToResponse(saved);
     }
 
+    @Override
+    public void deleteAppointment(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+        appointmentRepository.delete(appointment);
+    }
+
     private AppointmentResponse mapToResponse(Appointment appointment) {
         String patientName = "Unknown";
         String doctorName = "Unknown";
