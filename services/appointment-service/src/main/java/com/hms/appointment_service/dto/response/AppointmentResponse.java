@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 public class AppointmentResponse {
     private Long id;
     private Long patientAuthId;
+    private String patientName;
     private Long doctorAuthId;
+    private String doctorName;
     private LocalDate appointmentDate;
     private LocalTime appointmentTime;
     private String reason;

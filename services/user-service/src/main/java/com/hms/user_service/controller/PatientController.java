@@ -64,6 +64,15 @@ public class PatientController {
                 .body(ApiResponse.success("Profile updated successfully", response));
     }
 
+    @GetMapping("/auth/{authId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse<PatientResponse>> getPatientByAuthId(@PathVariable Long authId) {
+        PatientResponse response = patientService.getPatientByAuthId(authId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Patient retrieved successfully", response));
+    }
+
     @DeleteMapping("/me")
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<ApiResponse<?>> deleteMyAccount(Authentication authentication) {

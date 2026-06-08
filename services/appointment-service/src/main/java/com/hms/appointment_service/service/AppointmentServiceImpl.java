@@ -130,10 +130,35 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private AppointmentResponse mapToResponse(Appointment appointment) {
+        String patientName = "Unknown";
+        String doctorName = "Unknown";
+
+        try {
+            UserServiceClient.PatientResponse patientResponse =
+                    userServiceClient.getPatientByAuthId(appointment.getPatientAuthId());
+            if (patientResponse.isSuccess() && patientResponse.getData() != null) {
+                patientName = patientResponse.getData().getName();
+            }
+        } catch (Exception e) {
+            // user-service might be down
+        }
+
+        try {
+            UserServiceClient.DoctorResponse doctorResponse =
+                    userServiceClient.getDoctorByAuthId(appointment.getDoctorAuthId());
+            if (doctorResponse.isSuccess() && doctorResponse.getData() != null) {
+                doctorName = doctorResponse.getData().getName();
+            }
+        } catch (Exception e) {
+            // user-service might be down
+        }
+
         return AppointmentResponse.builder()
                 .id(appointment.getId())
                 .patientAuthId(appointment.getPatientAuthId())
+                .patientName(patientName)
                 .doctorAuthId(appointment.getDoctorAuthId())
+                .doctorName(doctorName)
                 .appointmentDate(appointment.getAppointmentDate())
                 .appointmentTime(appointment.getAppointmentTime())
                 .reason(appointment.getReason())
