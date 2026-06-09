@@ -124,4 +124,13 @@ public class DoctorController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Doctor deleted successfully"));
     }
+
+    @GetMapping("/approved")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse<List<DoctorResponse>>> getApprovedDoctors() {
+        List<DoctorResponse> response = doctorService.getApprovedDoctors();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success("Approved doctors retrieved successfully", response));
+    }
 }

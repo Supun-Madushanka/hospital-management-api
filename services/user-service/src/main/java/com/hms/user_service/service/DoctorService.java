@@ -16,4 +16,5 @@ public interface DoctorService {
     void deleteDoctor(Long authId);
     List<DoctorResponse> getAllDoctors();
     void deleteDoctorById(Long id);
+    List<DoctorResponse> getApprovedDoctors();
 }
