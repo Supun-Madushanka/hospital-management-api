@@ -1,0 +1,168 @@
+version: '3.8'
+
+networks:
+  hms-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  user-db-data:
+  appointment-db-data:
+
+services:
+
+  # ===== DATABASES =====
+
+  auth-db:
+    image: mysql:8.0
+    container_name: auth-db
+    environment:
+      MYSQL_DATABASE: ath_db
+      MYSQL_ROOT_PASSWORD: supun@1357
+    volumes:
+      - auth-db-data:/var/lib/mysql
+    networks: [hms-network]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-db:
+    image: mysql:8.0
+    container_name: user-db
+    environment:
+      MYSQL_DATABASE: usr_db
+      MYSQL_ROOT_PASSWORD: supun@1357
+    volumes:
+      - user-db-data:/var/lib/mysql
+    networks: [hms-network]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  appointment-db:
+    image: mysql:8.0
+    container_name: appointment-db
+    environment:
+      MYSQL_DATABASE: appoint_db
+      MYSQL_ROOT_PASSWORD: supun@1357
+    volumes:
+      - appointment-db-data:/var/lib/mysql
+    networks: [hms-network]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== INFRASTRUCTURE =====
+
+  eureka-server:
+    build:
+      context: .
+      dockerfile: services/eureka-server/Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks: [hms-network]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  config-server:
+    build:
+      context: .
+      dockerfile: services/config-server/Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    networks: [hms-network]
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+
+  # ===== SERVICES =====
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: auth-service
+    expose:
+      - "9001"
+    networks: [hms-network]
+    depends_on:
+      auth-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-db:3306/ath_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: supun@1357
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_EXPIRATION: 86400000
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    container_name: user-service
+    expose:
+      - "9002"
+    networks: [hms-network]
+    depends_on:
+      user-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/usr_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: supun@1357
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_EXPIRATION: 86400000
+
+  appointment-service:
+    build:
+      context: .
+      dockerfile: services/appointment-service/Dockerfile
+    container_name: appointment-service
+    expose:
+      - "9003"
+    networks: [hms-network]
+    depends_on:
+      appointment-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://appointment-db:3306/appoint_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: supun@1357
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_EXPIRATION: 86400000
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    networks: [hms-network]
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
